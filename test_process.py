@@ -23,3 +23,33 @@ def test_statement_coverage(values, expected):
 ])
 def test_branch_coverage(values, expected):
     assert process(values) == expected
+
+
+# Etapa 3 - Cobertura de caminos (Path Coverage)
+# Cada valor puede tomar 4 rutas segun las decisiones D1 y D2:
+#   A: 2  -> D1=V, D2=V -> ["positivo", "par"]
+#   B: 1  -> D1=V, D2=F -> ["positivo"]
+#   C: -2 -> D1=F, D2=V -> ["par"]
+#   D: -1 -> D1=F, D2=F -> []
+# Con listas de 2 valores existen 4 x 4 = 16 caminos posibles.
+@pytest.mark.path
+@pytest.mark.parametrize("values, expected", [
+    ([2, 2], ["positivo", "par", "positivo", "par"]),   # A-A
+    ([2, 1], ["positivo", "par", "positivo"]),          # A-B
+    ([2, -2], ["positivo", "par", "par"]),              # A-C
+    ([2, -1], ["positivo", "par"]),                     # A-D
+    ([1, 2], ["positivo", "positivo", "par"]),          # B-A
+    ([1, 1], ["positivo", "positivo"]),                 # B-B
+    ([1, -2], ["positivo", "par"]),                     # B-C
+    ([1, -1], ["positivo"]),                            # B-D
+    ([-2, 2], ["par", "positivo", "par"]),              # C-A
+    ([-2, 1], ["par", "positivo"]),                     # C-B
+    ([-2, -2], ["par", "par"]),                         # C-C
+    ([-2, -1], ["par"]),                                # C-D
+    ([-1, 2], ["positivo", "par"]),                     # D-A
+    ([-1, 1], ["positivo"]),                            # D-B
+    ([-1, -2], ["par"]),                                # D-C
+    ([-1, -1], []),                                     # D-D
+])
+def test_path_coverage(values, expected):
+    assert process(values) == expected
